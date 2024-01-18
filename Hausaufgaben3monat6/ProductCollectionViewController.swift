@@ -96,7 +96,19 @@ class ProductsCollectionViewController: UIViewController {
             }
         }
     }
+    
+    private func showProductAlert(for indexPath: IndexPath) {
+        let alertController = UIAlertController(title: "Selected Product",
+                                                message: "You selected product at index \(indexPath.item)",
+                                                preferredStyle: .alert)
+
+        let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        alertController.addAction(okAction)
+
+        present(alertController, animated: true, completion: nil)
+    }
 }
+
 
 extension ProductsCollectionViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -104,14 +116,26 @@ extension ProductsCollectionViewController: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ProductsCollectionViewCell.id, for: indexPath)
-        as! ProductsCollectionViewCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ProductsCollectionViewCell.id, for: indexPath) as! ProductsCollectionViewCell
         let model = products[indexPath.item]
         cell.fill(with: model)
         cell.backgroundColor = UIColor.white
         cell.layer.cornerRadius = 10
         cell.clipsToBounds = true
         cell.layer.borderWidth = 1
+        cell.delegate = self
         return cell
     }
 }
+extension ProductsCollectionViewController: ProductCellDelegate {
+    func didSelectProduct(_ product: Product) {
+        let both = "\(product.description), \(product.price)$"
+        let alert = UIAlertController(title: product.title, message: both, preferredStyle: .alert)
+         
+        alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
+         
+        self.present(alert, animated: true)
+    }
+}
+
+
